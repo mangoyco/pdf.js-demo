@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type="text/javascript" src="./build/pdf.js"></script>
+  <script type="text/javascript" src="./build/pdf.worker.js"></script>
+</head>
+
+<body>
+  <img id="img" src="" alt="" srcset="">
+  <script>
+    pdfjsLib.getDocument("test.pdf").promise.then((pdf) => {
+      const numPages = pdf.numPages;
+      const allPromise = [];
+      for (let i = 1; i <= numPages; i++) {
+        allPromise.push(pdf.getPage(i))
+      }
+      return Promise.all(allPromise)
+    }).then(fin=>{
+      console.log(fin)
+      fin.forEach((p,i) => {
+        var canvas = document.createElement('canvas');
+        canvas.id = "pageNum" + i;
+        document.body.append(canvas);
+        var context = canvas.getContext('2d');
+        renderImg(p,context,canvas)
+      });
+    })
+    var renderImg = function(page,canvasContext,canvasdom){
+      var viewport = page.getViewport({ scale: 2, }); // 页面缩放比例
+      var newcanvas = canvasContext.canvas;
+
+      //设置canvas真实宽高
+      newcanvas.width = viewport.width;
+      newcanvas.height = viewport.height;
+
+      //设置canvas在浏览中宽高
+      newcanvas.style.width = "40%";
+      newcanvas.style.height = "40%";
+
+      var renderContext = {
+        canvasContext: canvasContext,
+        viewport: viewport
+      };
+
+      // page.render(renderContext); //渲染生成
+      page.render(renderContext).promise.then(res=>{
+        var baseStr = canvasdom.toDataURL("image/png")
+        console.log(baseStr)
+        document.getElementById('img').src = baseStr
+      })
+
+    }
+  </script>
+</body>
+
+</html>
