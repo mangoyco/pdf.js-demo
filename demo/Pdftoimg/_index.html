@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type="text/javascript" src="js/pdf.js"></script>
+  <script type="text/javascript" src="js/pdf.worker.js"></script>
+</head>
+<body>
+
+  <script src="wyc.js"></script>
+  <script>
+    getUrlsByPdf('http://vpshz.lunz.cn/gfs/2020/08/05/发票预览_20200805110526016.pdf').then(res=>{
+      console.log(res)
+      res.forEach(element => {
+        let i = document.createElement('img')
+        i.src = element
+        document.body.append(i)
+      });
+    })
+  </script>
+</body>
+</html>
